@@ -63,20 +63,18 @@ details.each do |row|
         # puts y
         if (y != '' and y != '-') then
           goals = y.split(/-/)
-          if (goals[0].to_i + goals[1].to_i >= 2) then
+          if (goals[0].to_i + goals[1].to_i >= 3) then
             aux = aux + 1
           end
         end
       end
     end
 
-    puts row[:casa]
-    puts row[:fora]
-    puts aux
-    if ((aux * 10)/2 >= 80) then
+    if ((aux * 10)/2 >= 70) then
+      puts row[:casa]
+      puts row[:fora]
+      puts aux
       print "YES!\n\n"
-    else
-      print "NO!\n\n"
     end
 
   end
