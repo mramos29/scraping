@@ -13,20 +13,35 @@
 
 require 'nokogiri'
 require 'open-uri'
-require 'net/smtp'
 require 'pp'
+require 'date'
+require 'net/smtp'
 
 # Mail details
-from = 'me@mailserver.com'
-to = 'me@mailserver.com'
+from = 'admin@bat-cave.eu'
+to = 'admin@bat-cave.eu'
 smtp_server = 'localhost'
 port = 25
 subject = 'Daily bets'
 message = ''
+date = Date.today.strftime("%d/%m/%Y")
 
 # Page with daily matches
-source = "https://www.academiadasapostas.com/stats/livescores" 
+source = "https://www.academiadasapostas.com/stats/livescores"
 
+
+# Check arguments
+if ARGV.length != 2 then
+  print "usage: #{$0} <goals> <percenteage>\n"
+  exit
+end
+
+goals_thold = ARGV[0].to_i
+percentage_thold = ARGV[1].to_i
+
+subject = subject + " #{date} (>= #{goals_thold} goals with percentage >= #{percentage_thold}\%)"
+
+# Let the scrap begin...
 page = Nokogiri::HTML(open(source))
 page.encoding = 'utf-8'
 
@@ -80,14 +95,14 @@ details.each do |row|
       key.each do |x, y|
         if (y != '' and y != '-') then
           goals = y.split(/-/)
-          if (goals[0].to_i + goals[1].to_i >= 2) then
+          if (goals[0].to_i + goals[1].to_i >= goals_thold) then
             aux = aux + 1
           end
         end
       end
     end
 
-    if (aux * 5 >= 85) then
+    if (aux * 5 >= percentage_thold) then
       message = message + "#{row[:casa]} - #{row[:fora]} (#{aux*5}\%)\n"
     end
 
@@ -107,4 +122,3 @@ EOF
 Net::SMTP.start(smtp_server, port) do |smtp|
   smtp.send_message msgstr, from, to
 end
-
