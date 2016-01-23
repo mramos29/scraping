@@ -31,7 +31,7 @@ source = "https://www.academiadasapostas.com/stats/livescores"
 
 # Check arguments
 if ARGV.length != 2 then
-  print "usage: #{$0} <goals> <percenteage>\n"
+  print "usage: #{$0} <goals> <percentage>\n"
   exit
 end
 
