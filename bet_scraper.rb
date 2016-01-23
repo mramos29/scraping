@@ -1,11 +1,33 @@
+#!/usr/bin/env ruby
+#
+# This script scrapes "Academia das Apostas" site looking for matches with a high probability of many goals.
+#
+# For each daily match, this script will analyse the 10 previous matches of each team and calculate the percentage
+# of mateches with more than X goals. If percentage is above Y%, that match is considered a good match to bet
+# on goals market.
+#
+# Results/tips are sent by e-mail to defined addresses
+#
+# Marco Ramos, <mramos@29.sapo.pt>, 22/01/2016
+# 
 
 require 'nokogiri'
 require 'open-uri'
+require 'net/smtp'
 require 'pp'
 
-#str_friendly="Mundo - Amigáveis Clubes"
+# Mail details
+from = 'me@mailserver.com'
+to = 'me@mailserver.com'
+smtp_server = 'localhost'
+port = 25
+subject = 'Daily bets'
+message = ''
 
-page = Nokogiri::HTML(open("https://www.academiadasapostas.com/stats/livescores"))
+# Page with daily matches
+source = "https://www.academiadasapostas.com/stats/livescores" 
+
+page = Nokogiri::HTML(open(source))
 page.encoding = 'utf-8'
 
 # Games' table starts with:
@@ -29,8 +51,6 @@ details = rows.collect do |row|
   detail
 end
 
-# puts details 
-
 details.each do |row|
  if (row[:stats] != "") then
     page_game = Nokogiri::HTML(open(row[:stats]))
@@ -42,8 +62,6 @@ details.each do |row|
     #<td colspan="2">
     #                                <span class="stats-title">Últimos 10 jogos em todas as competições
     last_games = page_game.css('table')[4]
-
-    # puts last_games
 
     rows_games = last_games.search('//table[starts-with(@class, "stat-last10")]/tbody/tr')
 
@@ -60,25 +78,33 @@ details.each do |row|
     aux = 0
     details_games.each do |key, row|
       key.each do |x, y|
-        # puts y
         if (y != '' and y != '-') then
           goals = y.split(/-/)
-          if (goals[0].to_i + goals[1].to_i >= 3) then
+          if (goals[0].to_i + goals[1].to_i >= 2) then
             aux = aux + 1
           end
         end
       end
     end
 
-    if ((aux * 10)/2 >= 70) then
-      puts row[:casa]
-      puts row[:fora]
-      puts aux
-      print "YES!\n\n"
+    if (aux * 5 >= 85) then
+      message = message + "#{row[:casa]} - #{row[:fora]} (#{aux*5}\%)\n"
     end
 
   end
 end
 
+# Send e-mail with results
+msgstr = <<EOF
+From: #{from}
+To: #{to}
+Subject: #{subject}
+Content-type: text/plain; charset=UTF-8
 
-#pp details
+#{message}
+EOF
+
+Net::SMTP.start(smtp_server, port) do |smtp|
+  smtp.send_message msgstr, from, to
+end
+
