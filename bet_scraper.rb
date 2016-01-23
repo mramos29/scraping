@@ -3,7 +3,7 @@
 # This script scrapes "Academia das Apostas" site looking for matches with a high probability of many goals.
 #
 # For each daily match, this script will analyse the 10 previous matches of each team and calculate the percentage
-# of mateches with more than X goals. If percentage is above Y%, that match is considered a good match to bet
+# of matches with more than X goals. If percentage is above Y%, that match is considered a good match to bet
 # on goals market.
 #
 # Results/tips are sent by e-mail to defined addresses
@@ -28,7 +28,6 @@ date = Date.today.strftime("%d/%m/%Y")
 
 # Page with daily matches
 source = "https://www.academiadasapostas.com/stats/livescores"
-
 
 # Check arguments
 if ARGV.length != 2 then
