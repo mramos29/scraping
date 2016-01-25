@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# This script scrapes "Academia das Apostas" site looking for matches with a high probability of many goals.
+# This script scraps "Academia das Apostas" site looking for matches with a high probability of many goals.
 #
 # For each daily match, this script will analyse the 10 previous matches of each team and calculate the percentage
 # of matches with more than X goals. If percentage is above Y%, that match is considered a good match to bet
