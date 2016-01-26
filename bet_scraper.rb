@@ -1,6 +1,5 @@
-#!/usr/bin/env ruby
 #
-# This script scrapes "Academia das Apostas" site looking for matches with a high probability of many goals.
+# This script scraps "Academia das Apostas" site looking for matches with a high probability of many goals.
 #
 # For each daily match, this script will analyse the 10 previous matches of each team and calculate the percentage
 # of matches with more than X goals. If percentage is above Y%, that match is considered a good match to bet
@@ -20,6 +19,8 @@ require 'net/smtp'
 # Mail details
 from = 'admin@bat-cave.eu'
 to = 'admin@bat-cave.eu'
+cc = 'admin@bat-cave.eu'
+
 smtp_server = 'localhost'
 port = 25
 subject = 'Daily bets'
@@ -108,10 +109,16 @@ details.each do |row|
   end
 end
 
+# If message is empty, we don't need to send mail
+if message.length == 0 then
+  exit
+end
+
 # Send e-mail with results
 msgstr = <<EOF
 From: #{from}
-To: #{to}
+To: #{to} 
+Cc: #{cc}
 Subject: #{subject}
 Content-type: text/plain; charset=UTF-8
 
@@ -119,5 +126,5 @@ Content-type: text/plain; charset=UTF-8
 EOF
 
 Net::SMTP.start(smtp_server, port) do |smtp|
-  smtp.send_message msgstr, from, to
+  smtp.send_message msgstr, from, to, cc
 end
