@@ -67,7 +67,7 @@ details = rows.collect do |row|
 end
 
 details.each do |row|
- if (row[:stats] != "") then
+  if (row[:stats] != "") then
     page_game = Nokogiri::HTML(open(row[:stats]))
     page_game.encoding = 'utf-8'
   
