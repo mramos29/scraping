@@ -20,7 +20,6 @@ require 'net/smtp'
 from = 'admin@bat-cave.eu'
 to = 'admin@bat-cave.eu'
 cc = 'admin@bat-cave.eu'
-#cc = 'ricardup@gmail.com'
 
 smtp_server = 'localhost'
 port = 25
@@ -96,16 +95,12 @@ details.each do |row|
       key.each do |x, y|
         if (y != '' and y != '-') then
           goals = y.split(/-/)
-          if (goals[0].to_i + goals[1].to_i >= goals_thold) then
-            aux = aux + 1
-          end
+          aux = aux + 1 unless (goals[0].to_i + goals[1].to_i < goals_thold)
         end
       end
     end
 
-    if (aux * 5 >= percentage_thold) then
-      message = message + "#{row[:casa]} - #{row[:fora]} (#{aux*5}\%)\n"
-    end
+    message = message + "#{row[:casa]} - #{row[:fora]} (#{aux*5}\%)\n" unless (aux * 5 < percentage_thold)
 
   end
 end
