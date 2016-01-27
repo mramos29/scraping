@@ -20,6 +20,7 @@ require 'net/smtp'
 from = 'admin@bat-cave.eu'
 to = 'admin@bat-cave.eu'
 cc = 'admin@bat-cave.eu'
+#cc = 'ricardup@gmail.com'
 
 smtp_server = 'localhost'
 port = 25
@@ -110,9 +111,7 @@ details.each do |row|
 end
 
 # If message is empty, we don't need to send mail
-if message.length == 0 then
-  exit
-end
+exit unless message.length > 0
 
 # Send e-mail with results
 msgstr = <<EOF
