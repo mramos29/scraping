@@ -30,6 +30,10 @@ date = Date.today.strftime("%d/%m/%Y")
 # Page with daily matches
 source = "https://www.academiadasapostas.com/stats/livescores"
 
+# Competitions we want to ignore (friendlies, etc)
+ignore = [ 'co cfriendly', 
+           'co cfriendly-w' ]
+
 # Check arguments
 if ARGV.length != 2 then
   print "usage: #{$0} <goals> <percentage>\n"
@@ -59,7 +63,7 @@ details = rows.collect do |row|
     [:casa, 'td[6]/p/text()'],
     [:fora, 'td[8]/p/text()'],
     [:stats, 'td[10]/a/@href'],
-    [:bet, 0]
+    [:competicao, 'td[2]/a/ul/li/@class' ]
   ].each do |name, xpath|
     detail[name] = row.at_xpath(xpath).to_s.strip
   end
@@ -67,7 +71,7 @@ details = rows.collect do |row|
 end
 
 details.each do |row|
- if (row[:stats] != "") then
+  if (row[:stats] != "" and not ignore.include? row[:competicao] ) then
     page_game = Nokogiri::HTML(open(row[:stats]))
     page_game.encoding = 'utf-8'
   
