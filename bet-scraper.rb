@@ -1,8 +1,8 @@
 #
-# This script scraps "Academia das Apostas" site looking for matches with a high probability of many goals.
+# This script scraps "Academia das Apostas" site looking for matches with a high probability of many or few goals.
 #
 # For each daily match, this script will analyse the 10 previous matches of each team and calculate the percentage
-# of matches with more than X goals. If percentage is above Y%, that match is considered a good match to bet
+# of matches with more or less than X goals. If percentage is above Y%, that match is considered a good match to bet
 # on goals market.
 #
 # Results/tips are sent by e-mail to defined addresses
@@ -20,6 +20,7 @@ require 'net/smtp'
 from = 'admin@bat-cave.eu'
 to = 'admin@bat-cave.eu'
 cc = 'admin@bat-cave.eu'
+#cc = 'ricardup@gmail.com'
 
 smtp_server = 'localhost'
 port = 25
@@ -35,15 +36,21 @@ ignore = [ 'co cfriendly',
            'co cfriendly-w' ]
 
 # Check arguments
-if ARGV.length != 2 then
-  print "usage: #{$0} <goals> <percentage>\n"
+if ARGV.length != 3 and ARGV[0] != "over" and ARGV[0] != "under" then
+  print "usage: #{$0} <over|under> <goals> <percentage>\n"
   exit
 end
 
-goals_thold = ARGV[0].to_i
-percentage_thold = ARGV[1].to_i
+puts ARGV[0]
+puts ARGV[1]
+puts ARGV[2]
 
-subject = subject + " #{date} (>= #{goals_thold} goals with percentage >= #{percentage_thold}\%)"
+over_under = ARGV[0]
+goals_thold = ARGV[1].to_i
+percentage_thold = ARGV[2].to_i
+
+subject = subject + " #{date} (>= #{goals_thold} goals with percentage >= #{percentage_thold}\%)" unless over_under == "under"
+subject = subject + " #{date} (<= #{goals_thold} goals with percentage >= #{percentage_thold}\%)" unless over_under == "over"
 
 # Let the scrap begin...
 page = Nokogiri::HTML(open(source))
@@ -95,14 +102,23 @@ details.each do |row|
     end
    
     aux = 0
+    puts aux
     details_games.each do |key, row|
       key.each do |x, y|
         if (y != '' and y != '-') then
           goals = y.split(/-/)
-          aux = aux + 1 unless (goals[0].to_i + goals[1].to_i < goals_thold)
+          if ( over_under == "over" ) then
+            aux = aux + 1 unless (goals[0].to_i + goals[1].to_i) < goals_thold
+          else
+            aux = aux + 1 unless (goals[0].to_i + goals[1].to_i) >= goals_thold
+          end
         end
       end
     end
+
+    puts row[:casa]
+    puts row[:fora]
+    puts aux
 
     message = message + "#{row[:casa]} - #{row[:fora]} (#{aux*5}\%)\n" unless (aux * 5 < percentage_thold)
 
