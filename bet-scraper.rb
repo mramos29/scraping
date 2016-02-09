@@ -101,26 +101,30 @@ details.each do |row|
       detail
     end
    
-    aux = 0
-    puts aux
+    jogos = 0
+    puts jogos
     details_games.each do |key, row|
+      aux = 1
       key.each do |x, y|
         if (y != '' and y != '-') then
           goals = y.split(/-/)
           if ( over_under == "over" ) then
-            aux = aux + 1 unless (goals[0].to_i + goals[1].to_i) < goals_thold
+            jogos = jogos + 1 unless (goals[0].to_i + goals[1].to_i) < goals_thold
           else
-            aux = aux + 1 unless (goals[0].to_i + goals[1].to_i) >= goals_thold
+            puts goals[0].to_i 
+            puts goals[1].to_i 
+            jogos = jogos + 1 unless (goals[0].to_i + goals[1].to_i) >= goals_thold
           end
         end
+        aux = aux + 1
+        break unless aux <= 20
       end
     end
 
     puts row[:casa]
     puts row[:fora]
-    puts aux
 
-    message = message + "#{row[:casa]} - #{row[:fora]} (#{aux*5}\%)\n" unless (aux * 5 < percentage_thold)
+    message = message + "#{row[:casa]} - #{row[:fora]} (#{jogos*5}\%)\n" unless (jogos * 5 < percentage_thold)
 
   end
 end
