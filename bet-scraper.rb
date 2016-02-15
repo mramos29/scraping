@@ -16,11 +16,17 @@ require 'pp'
 require 'date'
 require 'net/smtp'
 
+# Check if string is an integer
+class String
+  def is_integer?
+    !!(self =~ /\A[-+]?[0-9]+\z/)
+  end
+end
+
 # Mail details
 from = 'admin@bat-cave.eu'
 to = 'admin@bat-cave.eu'
 cc = 'admin@bat-cave.eu'
-#cc = 'ricardup@gmail.com'
 
 smtp_server = 'localhost'
 port = 25
@@ -40,10 +46,6 @@ if ARGV.length != 3 and ARGV[0] != "over" and ARGV[0] != "under" then
   print "usage: #{$0} <over|under> <goals> <percentage>\n"
   exit
 end
-
-puts ARGV[0]
-puts ARGV[1]
-puts ARGV[2]
 
 over_under = ARGV[0]
 goals_thold = ARGV[1].to_i
@@ -102,27 +104,23 @@ details.each do |row|
     end
    
     jogos = 0
-    puts jogos
     details_games.each do |key, row|
       aux = 1
       key.each do |x, y|
         if (y != '' and y != '-') then
-          goals = y.split(/-/)
-          if ( over_under == "over" ) then
-            jogos = jogos + 1 unless (goals[0].to_i + goals[1].to_i) < goals_thold
-          else
-            puts goals[0].to_i 
-            puts goals[1].to_i 
-            jogos = jogos + 1 unless (goals[0].to_i + goals[1].to_i) >= goals_thold
+          goals = y.split(/-/) 
+
+          if goals[0].is_integer? then
+            if ( over_under == "over" ) then
+              jogos = jogos + 1 unless (goals[0].is_integer? and (goals[0].to_i + goals[1].to_i) < goals_thold)
+            else
+              jogos = jogos + 1 unless (goals[0].is_integer? and (goals[0].to_i + goals[1].to_i) > goals_thold)
+            end
           end
+
         end
-        aux = aux + 1
-        break unless aux <= 20
       end
     end
-
-    puts row[:casa]
-    puts row[:fora]
 
     message = message + "#{row[:casa]} - #{row[:fora]} (#{jogos*5}\%)\n" unless (jogos * 5 < percentage_thold)
 
@@ -145,4 +143,11 @@ EOF
 
 Net::SMTP.start(smtp_server, port) do |smtp|
   smtp.send_message msgstr, from, to, cc
+end
+
+# Check if string is an integer
+class String
+  def is_integer?
+    !!(self =~ /\A[-+]?[0-9]+\z/)
+  end
 end
