@@ -26,7 +26,7 @@ end
 # Mail details
 from = 'admin@bat-cave.eu'
 to = 'admin@bat-cave.eu'
-cc = 'admin@bat-cave.eu'
+cc = 'ricardup@gmail.com'
 
 smtp_server = 'localhost'
 port = 25
@@ -143,11 +143,4 @@ EOF
 
 Net::SMTP.start(smtp_server, port) do |smtp|
   smtp.send_message msgstr, from, to, cc
-end
-
-# Check if string is an integer
-class String
-  def is_integer?
-    !!(self =~ /\A[-+]?[0-9]+\z/)
-  end
 end
