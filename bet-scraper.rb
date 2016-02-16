@@ -62,6 +62,7 @@ page.encoding = 'utf-8'
 # <table width="100%" class="competition-today">
 games = page.css('table')[0]
 
+# Get daily matches list
 # Individual games start with:
 # <tbody>
 # <tr class="odd separator live-subscription" type="match" eventid="2188337" competitionid="138">
@@ -79,6 +80,7 @@ details = rows.collect do |row|
   detail
 end
 
+# For each daily match, lets get the list of previous 10 games of each team...
 details.each do |row|
   if (row[:stats] != "" and not ignore.include? row[:competicao] ) then
     page_game = Nokogiri::HTML(open(row[:stats]))
@@ -103,6 +105,7 @@ details.each do |row|
       detail
     end
    
+    # Now that we have the games list, lets do the math...
     jogos = 0
     details_games.each do |key, row|
       aux = 1
