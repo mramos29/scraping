@@ -1,13 +1,13 @@
 #
-# This script scraps "Academia das Apostas" site looking for matches with a high probability of many or few goals.
+# This script scraps "Academia das Apostas" site looking for matches with a high probability of both teams scoring at least a goal.
 #
 # For each daily match, this script will analyse the 10 previous matches of each team and calculate the percentage
-# of matches with more or less than X goals. If percentage is above Y%, that match is considered a good match to bet
-# on goals market.
+# of matches where both teams scored at least a goal. If percentage is above Y%, that match is considered a good match to bet
+# on BTS market.
 #
 # Results/tips are sent by e-mail to defined addresses
 #
-# Marco Ramos, <mramos@29.sapo.pt>, 22/01/2016
+# Marco Ramos, <mramos@29.sapo.pt>, 17/02/2016
 # 
 
 require 'nokogiri'
@@ -26,7 +26,7 @@ end
 # Mail details
 from = 'admin@bat-cave.eu'
 to = 'admin@bat-cave.eu'
-cc = 'ricardup@gmail.com'
+cc = 'admin@bat-cave.eu'
 
 smtp_server = 'localhost'
 port = 25
@@ -42,17 +42,14 @@ ignore = [ 'co cfriendly',
            'co cfriendly-w' ]
 
 # Check arguments
-if ARGV.length != 3 and ARGV[0] != "over" and ARGV[0] != "under" then
-  print "usage: #{$0} <over|under> <goals> <percentage>\n"
+if ARGV.length != 1 then
+  print "usage: #{$0} <percentage>\n"
   exit
 end
 
-over_under = ARGV[0]
-goals_thold = ARGV[1].to_i
-percentage_thold = ARGV[2].to_i
+percentage_thold = ARGV[0].to_i
 
-subject = subject + " #{date} (>= #{goals_thold} goals with percentage >= #{percentage_thold}\%)" unless over_under == "under"
-subject = subject + " #{date} (<= #{goals_thold} goals with percentage >= #{percentage_thold}\%)" unless over_under == "over"
+subject = subject + " #{date} (Both teams score with percentage >= #{percentage_thold}\%)"
 
 # Let the scrap begin...
 page = Nokogiri::HTML(open(source))
@@ -113,11 +110,7 @@ details.each do |row|
           goals = y.split(/-/) 
 
           if goals[0].is_integer? then
-            if ( over_under == "over" ) then
-              jogos = jogos + 1 unless (goals[0].is_integer? and (goals[0].to_i + goals[1].to_i) < goals_thold)
-            else
-              jogos = jogos + 1 unless (goals[0].is_integer? and (goals[0].to_i + goals[1].to_i) > goals_thold)
-            end
+            jogos = jogos + 1 unless (goals[0].to_i == 0 or goals[1].to_i == 0) 
           end
 
         end

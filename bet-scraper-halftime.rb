@@ -8,7 +8,7 @@
 #
 # Results/tips are sent by e-mail to defined addresses
 #
-# Marco Ramos, <mramos@29.sapo.pt>, 26/01/2016
+# Marco Ramos, <mramos@29.sapo.pt>, 16/02/2016
 # 
 
 require 'nokogiri'
@@ -28,7 +28,7 @@ end
 # Mail details
 from = 'admin@bat-cave.eu'
 to = 'admin@bat-cave.eu'
-cc = 'admin@bat-cave.eu'
+cc = 'ricardup@gmail.com'
 
 smtp_server = 'localhost'
 port = 25
@@ -125,9 +125,9 @@ details.each do |row|
       end
     end
 
-    # NEED TO CHECK WHY GAMES AER DUPLICATED!!!
-    # NEED TO CHECK WHY GAMES AER DUPLICATED!!!
-    # NEED TO CHECK WHY GAMES AER DUPLICATED!!!
+    # NEED TO CHECK WHY GAMES ARE DUPLICATED!!!
+    # NEED TO CHECK WHY GAMES ARE DUPLICATED!!!
+    # NEED TO CHECK WHY GAMES ARE DUPLICATED!!!
     result = (first_half.to_f * 100) / total
  
     if (result >= percentage_thold) then
