@@ -24,9 +24,9 @@ class String
 end
 
 # Mail details
-from = 'admin@bat-cave.eu'
-to = 'admin@bat-cave.eu'
-cc = 'ricardup@gmail.com'
+from = 'mail@example.com'
+to = 'mail@example.com'
+cc = 'mail@example.com'
 
 smtp_server = 'localhost'
 port = 25
